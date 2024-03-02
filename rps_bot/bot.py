@@ -2,7 +2,7 @@ import asyncio
 import logging
 import os
 
-from .handlers import play, start
+from .handlers import play, src, start
 
 from dotenv import load_dotenv
 from aiogram import Bot, Dispatcher
@@ -17,7 +17,7 @@ async def main() -> None:
 
     bot = Bot(os.getenv("BOT_TOKEN"))
     dp = Dispatcher()
-    dp.include_routers(start.router, play.router)
+    dp.include_routers(start.router, src.router, play.router)
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
