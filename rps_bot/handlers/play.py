@@ -1,4 +1,4 @@
-from random import choice
+from random import choice as rchoice
 
 from ..keyboards import main_kb
 from ..utils import choices, is_player_win
@@ -6,22 +6,20 @@ from ..filters import RpsFilter
 
 from aiogram import F, Router
 from aiogram.types import Message, ReplyKeyboardRemove
-from aiogram.filters import Command, StateFilter
-from aiogram.fsm.state import State, StatesGroup
+from aiogram.filters import Command
+from aiogram.fsm.state import State, StatesGroup, default_state
 from aiogram.fsm.context import FSMContext
 
 router = Router()
-bot_choice = None
 
 
 class InGame(StatesGroup):
     in_game = State()
 
 
-@router.message(Command("play"))
+@router.message(default_state, Command("play"))
 async def play(message: Message, state: FSMContext) -> None:
-    global bot_choice
-    bot_choice = choice(choices)
+    await state.update_data(choice=rchoice(choices))
 
     await message.answer(
         "Ваш ход:",
@@ -31,7 +29,10 @@ async def play(message: Message, state: FSMContext) -> None:
 
 
 @router.message(InGame.in_game, F.text, RpsFilter())
-async def send_winner(message: Message, item: str, state: FSMContext):
+async def send_winner(message: Message, item: str, state: FSMContext) -> None:
+    bot_data = await state.get_data()
+    bot_choice = bot_data['choice']
+
     status = is_player_win(bot_choice, item)
     match status:
         case True:
@@ -52,8 +53,28 @@ async def send_winner(message: Message, item: str, state: FSMContext):
     await state.clear()
 
 
+# ----- cancel handlers -----
+@router.message(default_state, Command("cancel"))
+async def cancel_no_state(message: Message, state: FSMContext) -> None:
+    await state.set_data({})
+    await message.answer(
+        "Нечего отменять",
+        reply_markup=ReplyKeyboardRemove()
+    )
+
+
+@router.message(Command("cancel"))
+async def cancel(message: Message, state: FSMContext) -> None:
+    await state.clear()
+    await message.answer(
+        "Игра отменена",
+        reply_markup=ReplyKeyboardRemove()
+    )
+# ---------------------------
+
+
 @router.message(InGame.in_game)
-async def incorrect_input(message: Message, state: FSMContext):
+async def incorrect_input(message: Message, state: FSMContext) -> None:
     await message.answer(
         "Кажется, вы отправили что-то не то, "
         "пожалуйста выберите камень, ножницы или бумагу из списка ниже",
