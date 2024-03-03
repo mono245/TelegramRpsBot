@@ -9,4 +9,4 @@ def main_kb() -> ReplyKeyboardMarkup:
     builder.button(text="Бумага")
     builder.adjust(2)
 
-    return builder.as_markup(resize_keyboars=True, selective=True)
+    return builder.as_markup(resize_keyboars=True)
