@@ -53,30 +53,11 @@ async def send_winner(message: Message, item: str, state: FSMContext) -> None:
     await state.clear()
 
 
-# ----- cancel handlers -----
-@router.message(default_state, Command("cancel"))
-async def cancel_no_state(message: Message, state: FSMContext) -> None:
-    await state.set_data({})
-    await message.answer(
-        "Нечего отменять",
-        reply_markup=ReplyKeyboardRemove()
-    )
-
-
-@router.message(Command("cancel"))
-async def cancel(message: Message, state: FSMContext) -> None:
-    await state.clear()
-    await message.answer(
-        "Игра отменена",
-        reply_markup=ReplyKeyboardRemove()
-    )
-# ---------------------------
-
-
 @router.message(InGame.in_game)
 async def incorrect_input(message: Message, state: FSMContext) -> None:
     await message.answer(
         "Кажется, вы отправили что-то не то, "
-        "пожалуйста выберите камень, ножницы или бумагу из списка ниже",
+        "пожалуйста выберите камень, ножницы или бумагу из списка ниже\n"
+        "либо пропишите /cancel для отмены игры",
         reply_markup=main_kb()
     )
