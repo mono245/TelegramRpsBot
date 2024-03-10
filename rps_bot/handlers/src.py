@@ -9,7 +9,7 @@ router = Router()
 @router.message(default_state, Command("src"))
 async def src(message: Message) -> None:
     await message.reply(
-        "Исходный код <a href=\"https://github.com/mono245/TelegramRpsBot\">здесь</a>",
+        "Исходный код <a href=\"https://github.com/mono245/telegram_rps_bot\">здесь</a>",
         parse_mode="HTML",
         disable_web_page_preview=True
     )
