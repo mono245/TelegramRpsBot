@@ -17,7 +17,7 @@ BOT_TOKEN="your telegram token"
 ```
 3. Перейдите в папку проекта в терминале: `cd ...`
 4. (опционально) Создайте вирт. окружение: `python3 -m venv env`
-5. И активируйте его (Windows): `env\Scripts\activate`, (Unix-подобные): `source env\bin\activate`
+5. И активируйте его (Windows): `env\Scripts\activate`, (Unix-подобные): `source env/bin/activate`
 6. Установите зависимости: `pip3 install -r requirments.txt`
 7. Готово :)
 
